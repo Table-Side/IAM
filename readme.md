@@ -2,7 +2,7 @@
 
 The repo for Tableside's Identity and Access Management (IAM).
 
-Uses (Keycloak)[https://www.keycloak.org]
+Uses [Keycloak](https://www.keycloak.org)
 
 ## Local Setup
 
