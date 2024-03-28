@@ -13,7 +13,7 @@ jobs:
         run: echo '${{ secrets.AZURE_VM_SSH_KEY }}' > tableside-iam.pem
 
       - name: Add host to known hosts
-        run: ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
+        run: mkdir ~/.ssh && chmod 700 ~/.ssh && ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
 
       - name: Navigate to project directory
         run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
