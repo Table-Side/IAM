@@ -31,7 +31,7 @@ jobs:
         run: scp -i ./tableside-iam.pem .env ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/.env
 
       - name: Stop docker compose instance on VM (if currently running)
-        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} docker compose -f server/docker-compose.yml down
+        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} sudo docker compose -f server/docker-compose.yml down
 
       - name: Run docker compose on VM
-        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} docker compose -f server/docker-compose.yml up -d
+        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} sudo docker compose -f server/docker-compose.yml up -d
