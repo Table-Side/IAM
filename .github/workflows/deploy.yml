@@ -9,28 +9,24 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - name: Create .env file
+        run: echo "TODO"
 
-      - uses: azure/ssh@v3
-        with:
-          host: ${{ secrets.AZURE_VM_HOST }}
-          username: ${{ secrets.AZURE_VM_USERNAME }}
-          privateKey: ${{ secrets.AZURE_VM_SSH_KEY }}
+      - name: Fetch .pem file from secret storage
+        run: echo ${{ secrets.AZURE_VM_SSH_KEY }} > ~/.ssh/id_rsa/tableside-iam.pem
 
       - name: Navigate to project directory
-        run: ssh ${{ steps.azure-ssh.outputs.output }} mkdir -p server/tableside-iam && cd server/tableside-iam
+        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
 
       - name: Download docker-compose.yml to VM
-        run: ssh ${{ steps.azure-ssh.outputs.output }} 'wget https://raw.githubusercontent.com/Table-Side/IAM/main/docker-compose.yml -O docker-compose.yml'
+        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem 'wget https://raw.githubusercontent.com/Table-Side/IAM/main/docker-compose.yml -O ~/server/docker-compose.yml'
 
       - name: Create .env file on VM
-        run: ssh ${{ steps.azure-ssh.outputs.output }} 'echo DB_HOST=postgres DB_USER=your_db_user DB_PASSWORD=your_db_password > .env'
+        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem 'echo POSTGRES_DB="${{ secrets.POSTGRES_DB }}" POSTGRES_USER="${{ secrets.POSTGRES_USER }}" POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KEYCLOAK_ADMIN="${{ secrets.KEYCLOAK_ADMIN_USERNAME }}" KEYCLOAK_ADMIN_PASSWORD="${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}" KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}" KC_DB="postgres" KC_DB_USERNAME="${{ secrets.POSTGRES_USER }}" KC_DB_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KC_DB_URL_DATABASE="${{ secrets.POSTGRES_DB }}" KC_DB_URL_HOST="postgres" KC_DB_URL_PORT="5432" > ~/server/.env'
 
       - name: Grant permissions for .env file on VM
-        run: ssh ${{ steps.azure-ssh.outputs.output }} chmod 600 .env
+        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem chmod 600 ~/server/.env
 
       - name: Run docker-compose on VM
-        run: ssh ${{ steps.azure-ssh.outputs.output }} docker-compose up -d
+        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem docker-compose up -d
 
