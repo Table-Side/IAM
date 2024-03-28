@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch .pem file from secret storage
-        run: echo '${{ secrets.AZURE_VM_SSH_KEY }}' > ~/.ssh/id_rsa/tableside-iam.pem
+        run: touch ~/.ssh/id_rsa/tableside-iam.pem echo & echo'${{ secrets.AZURE_VM_SSH_KEY }}' > ~/.ssh/id_rsa/tableside-iam.pem
 
       - name: Navigate to project directory
         run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
