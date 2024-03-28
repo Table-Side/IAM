@@ -16,10 +16,10 @@ jobs:
         run: echo '${{ secrets.AZURE_VM_SSH_KEY }}' > tableside-iam.pem && chmod 600 tableside-iam.pem
 
       - name: Add host to known hosts
-        run: ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
+        run: mkdir ~/.ssh && chmod 700 ~/.ssh && ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Create new `/server` directory on VM
-        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} rm -r server && mkdir -p server
+      - name: Create server directory on VM
+        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
 
       - name: Upload docker-compose.yml to VM
         run: scp -i ./tableside-iam.pem docker-compose.yml ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/docker-compose.yml
@@ -31,7 +31,7 @@ jobs:
         run: scp -i ./tableside-iam.pem .env ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/.env
 
       - name: Stop docker compose instance on VM (if currently running)
-        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} sudo docker compose -f server/docker-compose.yml down
+        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} docker compose -f server/docker-compose.yml down
 
       - name: Run docker compose on VM
-        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} sudo docker compose -f server/docker-compose.yml up -d
+        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} docker compose -f server/docker-compose.yml up -d
