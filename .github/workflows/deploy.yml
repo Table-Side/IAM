@@ -9,17 +9,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
       - name: Fetch .pem file from secret storage
         run: echo '${{ secrets.AZURE_VM_SSH_KEY }}' > tableside-iam.pem && chmod 600 tableside-iam.pem
 
       - name: Add host to known hosts
         run: mkdir ~/.ssh && chmod 700 ~/.ssh && ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
 
-      - name: Navigate to project directory
+      - name: Create server directory on VM
         run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
 
-      - name: Download docker-compose.yml to VM
-        run: ssh -i ./tableside-iam.pem 'wget https://raw.githubusercontent.com/Table-Side/IAM/main/docker-compose.yml -O ~/server/docker-compose.yml'
+      - name: Upload docker-compose.yml to VM
+        run: scp -i ./tableside-iam.pem docker-compose.yml ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/docker-compose.yml
 
       - name: Create .env file
         run: echo 'POSTGRES_DB="${{ secrets.POSTGRES_DB }}" POSTGRES_USER="${{ secrets.POSTGRES_USER }}" POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KEYCLOAK_ADMIN="${{ secrets.KEYCLOAK_ADMIN_USERNAME }}" KEYCLOAK_ADMIN_PASSWORD="${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}" KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}" KC_DB="postgres" KC_DB_USERNAME="${{ secrets.POSTGRES_USER }}" KC_DB_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KC_DB_URL_DATABASE="${{ secrets.POSTGRES_DB }}" KC_DB_URL_HOST="postgres" KC_DB_URL_PORT="5432"' > .env
