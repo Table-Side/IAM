@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch .pem file from secret storage
-        run: echo '${{ secrets.AZURE_VM_SSH_KEY }}' > tableside-iam.pem
+        run: echo '${{ secrets.AZURE_VM_SSH_KEY }}' > tableside-iam.pem && chmod 600 tableside-iam.pem
 
       - name: Add host to known hosts
         run: mkdir ~/.ssh && chmod 700 ~/.ssh && ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
