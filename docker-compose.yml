@@ -23,9 +23,10 @@ services:
       - KC_DB_URL
       - KC_DB_USERNAME
       - KC_DB_PASSWORD
+      - KC_HOSTNAME
     env_file: .env
     ports:
-      - "8040:8080"
+      - "8080:8080"
     volumes:
       - keycloak-data:/var/lib/keycloak/data
 

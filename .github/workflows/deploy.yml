@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - uses: azure/ssh@v3
+        with:
+          host: ${{ secrets.AZURE_VM_HOST }}
+          username: ${{ secrets.AZURE_VM_USERNAME }}
+          privateKey: ${{ secrets.AZURE_VM_SSH_KEY }}
+
+      - name: Navigate to project directory
+        run: ssh ${{ steps.azure-ssh.outputs.output }} mkdir -p server/tableside-iam && cd server/tableside-iam
+
+      - name: Download docker-compose.yml to VM
+        run: ssh ${{ steps.azure-ssh.outputs.output }} 'wget https://raw.githubusercontent.com/Table-Side/IAM/main/docker-compose.yml -O docker-compose.yml'
+
+      - name: Create .env file on VM
+        run: ssh ${{ steps.azure-ssh.outputs.output }} 'echo DB_HOST=postgres DB_USER=your_db_user DB_PASSWORD=your_db_password > .env'
+
+      - name: Grant permissions for .env file on VM
+        run: ssh ${{ steps.azure-ssh.outputs.output }} chmod 600 .env
+
+      - name: Run docker-compose on VM
+        run: ssh ${{ steps.azure-ssh.outputs.output }} docker-compose up -d
+
