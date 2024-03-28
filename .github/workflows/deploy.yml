@@ -10,22 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch .pem file from secret storage
-        run: touch ~/.ssh/id_rsa/tableside-iam.pem echo & echo'${{ secrets.AZURE_VM_SSH_KEY }}' > ~/.ssh/id_rsa/tableside-iam.pem
+        run: echo '${{ secrets.AZURE_VM_SSH_KEY }}' > tableside-iam.pem
 
       - name: Navigate to project directory
-        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
+        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
 
       - name: Download docker-compose.yml to VM
-        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem 'wget https://raw.githubusercontent.com/Table-Side/IAM/main/docker-compose.yml -O ~/server/docker-compose.yml'
+        run: ssh -i ./tableside-iam.pem 'wget https://raw.githubusercontent.com/Table-Side/IAM/main/docker-compose.yml -O ~/server/docker-compose.yml'
 
       - name: Create .env file
         run: echo 'POSTGRES_DB="${{ secrets.POSTGRES_DB }}" POSTGRES_USER="${{ secrets.POSTGRES_USER }}" POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KEYCLOAK_ADMIN="${{ secrets.KEYCLOAK_ADMIN_USERNAME }}" KEYCLOAK_ADMIN_PASSWORD="${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}" KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}" KC_DB="postgres" KC_DB_USERNAME="${{ secrets.POSTGRES_USER }}" KC_DB_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KC_DB_URL_DATABASE="${{ secrets.POSTGRES_DB }}" KC_DB_URL_HOST="postgres" KC_DB_URL_PORT="5432"' > .env
 
       - name: Upload .env file to VM
-        run: scp -i ~/.ssh/id_rsa/tableside-iam.pem .env ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/.env
+        run: scp -i ./tableside-iam.pem .env ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/.env
 
       - name: Grant permissions for .env file on VM
-        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem chmod 600 ~/server/.env
+        run: ssh -i ./tableside-iam.pem chmod 600 ~/server/.env
 
       - name: Run docker-compose on VM
-        run: ssh -i ~/.ssh/id_rsa/tableside-iam.pem docker-compose -f ~server/docker-compose.yml up -d
+        run: ssh -i ./tableside-iam.pem docker-compose -f ~server/docker-compose.yml up -d
