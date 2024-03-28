@@ -31,7 +31,7 @@ jobs:
         run: scp -i ./tableside-iam.pem .env ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/.env
 
       - name: Grant permissions for .env file on VM
-        run: ssh -i ./tableside-iam.pem chmod 600 ~/server/.env
+        run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} chmod 600 ~/server/.env
 
       - name: Run docker-compose on VM
         run: ssh -i ./tableside-iam.pem docker-compose -f ~server/docker-compose.yml up -d
