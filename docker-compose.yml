@@ -13,7 +13,7 @@ services:
   
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    command: start-dev
+    command: start
     depends_on:
       - postgres
     environment:
