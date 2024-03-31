@@ -24,6 +24,9 @@ jobs:
       - name: Create server directory on VM
         run: ssh -i ./tableside-iam.pem ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }} mkdir -p server
 
+      - name: Upload nginx code to VM
+        run: scp -i ./tableside-iam.pem ./nginx ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/nginx
+
       - name: Upload docker-compose.yml to VM
         run: scp -i ./tableside-iam.pem docker-compose.yml ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/docker-compose.yml
 
