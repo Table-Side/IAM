@@ -27,11 +27,11 @@ services:
       - KC_DB_URL_HOST
       - KC_DB_URL_PORT
     env_file: .env
-    restart: unless-stopped
+    restart: unless-stopped`
     volumes:
       - keycloak-data:/var/lib/keycloak/data
   nginx:
-    image: ghcr.io/table-side/iam-nginx:latest
+    image: ghcr.io/table-side/iam-nginx:main
     environment:
       - KEYCLOAK_HOST
       - KEYCLOAK_PORT
