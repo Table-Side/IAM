@@ -27,7 +27,7 @@ services:
       - KC_DB_URL_HOST
       - KC_DB_URL_PORT
     env_file: .env
-    restart: unless-stopped`
+    restart: unless-stopped
     volumes:
       - keycloak-data:/var/lib/keycloak/data
   nginx:
