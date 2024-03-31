@@ -31,7 +31,7 @@ services:
     volumes:
       - keycloak-data:/var/lib/keycloak/data
   nginx:
-    image: ghcr.io/Table-Side/iam-nginx:latest
+    image: ghcr.io/table-side/iam-nginx:latest
     environment:
       - KEYCLOAK_HOST
       - KEYCLOAK_PORT
