@@ -1,4 +1,4 @@
-version: "3.8"
+version: 3.8
 
 services:
   keycloak-postgres:
@@ -31,9 +31,7 @@ services:
     volumes:
       - keycloak-data:/var/lib/keycloak/data
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
+    image: ghcr.io/Table-Side/iam-nginx:latest
     environment:
       - KEYCLOAK_HOST
       - KEYCLOAK_PORT
@@ -50,9 +48,9 @@ services:
       - "443:443"
     restart: unless-stopped
     volumes:
-      - keycloak-nginx:/etc/letsencrypt
+      - keycloak-nginx-data:/etc/letsencrypt
 
 volumes:
   keycloak-postgres-data: {}
   keycloak-data: {}
-  keycloak-nginx: {}
+  keycloak-nginx-data: {}
