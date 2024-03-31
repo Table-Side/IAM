@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  postgres:
+  keycloak-postgres:
     image: postgres:latest
     environment:
       - POSTGRES_PASSWORD
@@ -9,13 +9,13 @@ services:
       - POSTGRES_DB
     env_file: .env
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-  
+      - keycloak-postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     command: start
     depends_on:
-      - postgres
+      - keycloak-postgres
     environment:
       - KEYCLOAK_ADMIN
       - KEYCLOAK_ADMIN_PASSWORD
@@ -27,11 +27,32 @@ services:
       - KC_DB_URL_HOST
       - KC_DB_URL_PORT
     env_file: .env
-    ports:
-      - "443:8443"
+    restart: unless-stopped
     volumes:
       - keycloak-data:/var/lib/keycloak/data
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    environment:
+      - KEYCLOAK_HOST
+      - KEYCLOAK_PORT
+      - KEYCLOAK_DOMAIN
+      - LE_EMAIL
+      - LE_OPTIONS
+      - LE_RENEW_OPTIONS
+      - LE_RENEW_CRON_COMMAND
+    env_file: .env
+    depends_on:
+      - keycloak
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped
+    volumes:
+      - keycloak-nginx:/etc/letsencrypt
 
 volumes:
-  postgres-data: {}
+  keycloak-postgres-data: {}
   keycloak-data: {}
+  keycloak-nginx: {}

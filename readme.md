@@ -1,8 +1,8 @@
-# Tableside: IAM Deployment
+# Tableside: IAM
 
-The repo for Tableside's Identity and Access Management (IAM).
+The repo for Tableside's Identity and Access Management (IAM) deployment.
 
-Uses [Keycloak](https://www.keycloak.org)
+Uses [Keycloak](https://www.keycloak.org) behind an NGINX reverse proxy.
 
 ## Local Setup
 
@@ -18,10 +18,19 @@ POSTGRES_PASSWORD="passw0rd"
 # - Keycloak - #
 KEYCLOAK_ADMIN="admin"
 KEYCLOAK_ADMIN_PASSWORD="passw0rd"
-KC_DB="postgres"
-KC_DB_URL="jdbc:postgresql://postgres:5432/keycloak"
-KC_DB_USERNAME="keycloak"
-KC_DB_PASSWORD="passw0rd"
+KC_HOSTNAME="auth.tableside.site"
+KC_DB_URL_HOST="postgres"
+KC_DB_URL_PORT="5432"
+KC_DB_URL_DATABASE=${POSTGRES_DB}
+KC_DB_USERNAME=${POSTGRES_USER}
+KC_DB_PASSWORD=${POSTGRES_PASSWORD}
+
+# - Let's Encrypt - #
+LE_EMAIL="gg00528@surrey.ac.uk"
+LE_OPTIONS="--staging --keep-until-expiring"
+LE_RENEW_OPTIONS="--dry-run --no-self-upgrade --post-hook '"'nginx -s reload'"'"
+LE_RENEW_CRON_COMMAND="echo 'Dummy cron command'"
+
 ```
 5. Run `docker compose up`
 6. Ensure all services start correctly.
