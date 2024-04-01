@@ -46,6 +46,9 @@ jobs:
           echo 'KC_DB_URL_DATABASE="${{ secrets.POSTGRES_DB }}"' >>.env
           echo 'KC_DB_URL_HOST="keycloak-postgres"' >> .env
           echo 'KC_DB_URL_PORT="5432"' >> .env
+          echo 'KC_HEALTH_ENABLED="true"' >> .env
+          echo 'KC_METRICS_ENABLED="true"' >> .env
+          echo 'PROXY_ADDRESS_FORWARDING="true"' >> .env
           echo ' # - Let's Encrypt SSL - #' >> .env
           echo 'KEYCLOAK_HOST="keycloak"' >> .env
           echo 'KEYCLOAK_PORT="8080"' >>.env

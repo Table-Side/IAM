@@ -26,9 +26,9 @@ services:
       - KC_DB_URL_DATABASE
       - KC_DB_URL_HOST
       - KC_DB_URL_PORT
-      - KC_HEALTH_ENABLED=true
-      - KC_METRICS_ENABLED=true
-      - PROXY_ADDRESS_FORWARDING=true
+      - KC_HEALTH_ENABLED
+      - KC_METRICS_ENABLED
+      - PROXY_ADDRESS_FORWARDING
     env_file: .env
     restart: unless-stopped
     volumes:
