@@ -32,9 +32,11 @@ jobs:
 
       - name: Create .env file
         run: |
+          echo ' # - Keyloak Postgres - #' >> .env
           echo 'POSTGRES_DB="${{ secrets.POSTGRES_DB }}"' >> .env
           echo 'POSTGRES_USER="${{ secrets.POSTGRES_USER }}"' >> .env
           echo 'POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"' >> .env
+          echo ' # - Keyloak - #' >> .env
           echo 'KEYCLOAK_ADMIN="${{ secrets.KEYCLOAK_ADMIN_USERNAME }}"' >> .env
           echo 'KEYCLOAK_ADMIN_PASSWORD="${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}"' >> .env
           echo 'KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}"' >>.env
@@ -44,6 +46,7 @@ jobs:
           echo 'KC_DB_URL_DATABASE="${{ secrets.POSTGRES_DB }}"' >>.env
           echo 'KC_DB_URL_HOST="keycloak-postgres"' >> .env
           echo 'KC_DB_URL_PORT="5432"' >> .env
+          echo ' # - Let's Encrypt SSL - #' >> .env
           echo 'KEYCLOAK_HOST="keycloak"' >> .env
           echo 'KEYCLOAK_PORT="8080"' >>.env
           echo 'KEYCLOAK_DOMAIN=${KC_HOSTNAME}' >> .env
