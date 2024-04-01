@@ -13,7 +13,7 @@ services:
     restart: unless-stopped
   keycloak:
     image: quay.io/keycloak/keycloak:latest
-    command: start
+    command: ['start', '--optimized']
     depends_on:
       - keycloak-postgres
     environment:
@@ -26,12 +26,17 @@ services:
       - KC_DB_URL_DATABASE
       - KC_DB_URL_HOST
       - KC_DB_URL_PORT
+      - KC_HEALTH_ENABLED=true
+      - KC_METRICS_ENABLED=true
+      - PROXY_ADDRESS_FORWARDING=true
     env_file: .env
     restart: unless-stopped
     volumes:
       - keycloak-data:/var/lib/keycloak/data
   nginx:
-    image: ghcr.io/table-side/iam-nginx:main
+    build: 
+      context: ./nginx
+      dockerfile: Dockerfile
     environment:
       - KEYCLOAK_HOST
       - KEYCLOAK_PORT
