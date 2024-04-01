@@ -31,7 +31,26 @@ jobs:
         run: scp -i ./tableside-iam.pem -r nginx ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/nginx
 
       - name: Create .env file
-        run: echo 'POSTGRES_DB="${{ secrets.POSTGRES_DB }}" POSTGRES_USER="${{ secrets.POSTGRES_USER }}" POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KEYCLOAK_ADMIN="${{ secrets.KEYCLOAK_ADMIN_USERNAME }}" KEYCLOAK_ADMIN_PASSWORD="${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}" KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}" KC_DB="postgres" KC_DB_USERNAME="${{ secrets.POSTGRES_USER }}" KC_DB_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" KC_DB_URL_DATABASE="${{ secrets.POSTGRES_DB }}" KC_DB_URL_HOST="postgres" KC_DB_URL_PORT="5432" KEYCLOAK_HOST="keycloak" KEYCLOAK_PORT="8080" KEYCLOAK_DOMAIN=${KC_HOSTNAME} LE_EMAIL="gg00528@surrey.ac.uk" LE_OPTIONS="--keep-until-expiring" LE_RENEW_OPTIONS="--dry-run --no-self-upgrade --post-hook 'nginx -s reload'" LE_RENEW_CRON_COMMAND="echo 'Dummy cron command'"' > .env
+        run: |
+          echo 'POSTGRES_DB="${{ secrets.POSTGRES_DB }}"' >> .env
+          echo 'POSTGRES_USER="${{ secrets.POSTGRES_USER }}"' >> .env
+          echo 'POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"' >> .env
+          echo 'KEYCLOAK_ADMIN="${{ secrets.KEYCLOAK_ADMIN_USERNAME }}"' >> .env
+          echo 'KEYCLOAK_ADMIN_PASSWORD="${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}"' >> .env
+          echo 'KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}"' >>.env
+          echo 'KC_DB="postgres"' >> .env
+          echo 'KC_DB_USERNAME="${{ secrets.POSTGRES_USER }}"' >> .env
+          echo 'KC_DB_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"' >> .env
+          echo 'KC_DB_URL_DATABASE="${{ secrets.POSTGRES_DB }}"' >>.env
+          echo 'KC_DB_URL_HOST="keycloak-postgres"' >> .env
+          echo 'KC_DB_URL_PORT="5432"' >> .env
+          echo 'KEYCLOAK_HOST="keycloak"' >> .env
+          echo 'KEYCLOAK_PORT="8080"' >>.env
+          echo 'KEYCLOAK_DOMAIN=${KC_HOSTNAME}' >> .env
+          echo 'LE_EMAIL="gg00528@surrey.ac.uk"' >> .env
+          echo 'LE_OPTIONS="--keep-until-expiring"' >> .env
+          echo 'LE_RENEW_OPTIONS="--dry-run --no-self-upgrade --post-hook 'nginx -s reload'"' >> .env
+          echo 'LE_RENEW_CRON_COMMAND="echo 'Dummy cron command'"' > .env
 
       - name: Upload .env file to VM
         run: scp -i ./tableside-iam.pem .env ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/.env
