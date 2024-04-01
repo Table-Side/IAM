@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   keycloak-postgres:
-    image: postgres:15
+    image: postgres:latest
     environment:
       - POSTGRES_PASSWORD
       - POSTGRES_USER
