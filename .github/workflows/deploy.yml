@@ -39,7 +39,7 @@ jobs:
           echo ' # - Keyloak - #' >> .env
           echo 'KEYCLOAK_ADMIN="${{ secrets.KEYCLOAK_ADMIN_USERNAME }}"' >> .env
           echo 'KEYCLOAK_ADMIN_PASSWORD="${{ secrets.KEYCLOAK_ADMIN_PASSWORD }}"' >> .env
-          echo 'KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}"' >>.env
+          echo 'KC_HOSTNAME="${{ vars.SERVER_HOSTNAME }}"' >> .env
           echo 'KC_DB="postgres"' >> .env
           echo 'KC_DB_USERNAME="${{ secrets.POSTGRES_USER }}"' >> .env
           echo 'KC_DB_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"' >> .env
@@ -51,12 +51,12 @@ jobs:
           echo 'PROXY_ADDRESS_FORWARDING="true"' >> .env
           echo ' # - Let's Encrypt SSL - #' >> .env
           echo 'KEYCLOAK_HOST="keycloak"' >> .env
-          echo 'KEYCLOAK_PORT="8080"' >>.env
+          echo 'KEYCLOAK_PORT="8080"' >> .env
           echo 'KEYCLOAK_DOMAIN=${KC_HOSTNAME}' >> .env
           echo 'LE_EMAIL="gg00528@surrey.ac.uk"' >> .env
           echo 'LE_OPTIONS="--keep-until-expiring"' >> .env
           echo 'LE_RENEW_OPTIONS="--dry-run --no-self-upgrade --post-hook 'nginx -s reload'"' >> .env
-          echo 'LE_RENEW_CRON_COMMAND="echo 'Dummy cron command'"' > .env
+          echo 'LE_RENEW_CRON_COMMAND="echo 'Dummy cron command'"' >> .env
 
       - name: Upload .env file to VM
         run: scp -i ./tableside-iam.pem .env ${{ secrets.AZURE_VM_USERNAME }}@${{ secrets.AZURE_VM_HOST }}:~/server/.env
